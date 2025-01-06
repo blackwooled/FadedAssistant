@@ -1,0 +1,9 @@
+{
+  "Sword": {"price": 8},
+  "Shield": {"price": 5},
+  "Potion": {"price": 3},
+
+  "Character Slot 3": {"price": 30000},
+  "Character Slot 4": {"price": 40000},
+  "Character Slot 5": {"price": 50000}
+}

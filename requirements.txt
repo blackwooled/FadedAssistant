@@ -1,0 +1,5 @@
+discord.py
+sqlite3
+python-dotenv
+
+pip install -r requirements.txt
