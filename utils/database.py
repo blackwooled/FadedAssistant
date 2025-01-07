@@ -1,17 +1,22 @@
 import sqlite3
 import json
 import os
+from dotenv import load_dotenv
 
 # List Of Database Functions
 
 #Finding user_data.db in data folder
-base_dir = os.path.dirname(os.path.abspath(__file__))
-db_path = os.path.join(base_dir, "..", "data", "user_data.db")
+#base_dir = os.path.dirname(os.path.abspath(__file__))
+#db_path = os.path.join(base_dir, "..", "data", "user_data.db")
+
+# Load .env file to get user_data.db path
+load_dotenv()
+db_path = os.getenv("db_path")
+armory_path = os.getenv("armory_path")
 
 # SQLite Database initialization
 
 def init_db():
-    print(f"Database path: {db_path}")  # Debugging line
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
     # Create the user_data table if it doesn't exist
@@ -44,6 +49,13 @@ def add_user(user_id):
         """, (user_id, 0, "[]"))
         conn.commit()
 
+# Retrieve user data
+def get_user_data(user_id):
+    with sqlite3.connect(db_path) as conn:
+        cursor = conn.cursor()
+        cursor.execute("SELECT crowns, inventory FROM user_data WHERE user_id = ?", (user_id,))
+        return cursor.fetchone()
+
 # Update crowns for a user
 def update_crowns(user_id, amount):
     with sqlite3.connect(db_path) as conn:
@@ -71,12 +83,30 @@ def update_crowns(user_id, amount):
 
         conn.commit()
 
-# Retrieve user data
-def get_user_data(user_id):
+# Function To View Inventory
+def view_inventory(user_id):
     with sqlite3.connect(db_path) as conn:
         cursor = conn.cursor()
-        cursor.execute("SELECT crowns, inventory FROM user_data WHERE user_id = ?", (user_id,))
-        return cursor.fetchone()
+        cursor.execute("SELECT inventory FROM users WHERE user_id = ?", (str(user_id),))
+        result = cursor.fetchone()
+        if result:
+            inventory = json.loads(result[0])
+            return inventory
+        else:
+            return []
+
+# Retrieve leaderboard
+def get_leaderboard():
+    with sqlite3.connect(db_path) as conn:
+        cursor = conn.cursor()
+        cursor.execute("""
+        SELECT user_id, crowns
+        FROM user_data
+        ORDER BY crowns DESC
+        LIMIT 10
+        """)
+        return cursor.fetchall()
+    
 
 # Add or Remove Crowns from a user (!!Admin Only!!)
 def modify_crowns(user_id, amount):
@@ -92,18 +122,6 @@ def modify_crowns(user_id, amount):
             return remaining_crowns
         else:
             return None
-
-# Function To View Inventory
-def view_inventory(user_id):
-    with sqlite3.connect(db_path) as conn:
-        cursor = conn.cursor()
-        cursor.execute("SELECT inventory FROM users WHERE user_id = ?", (str(user_id),))
-        result = cursor.fetchone()
-        if result:
-            inventory = json.loads(result[0])
-            return inventory
-        else:
-            return []
 
 # Function To Remove Items From The Inventory (!!Admin Only!!)
 def remove_item_from_inventory(user_id, item_name, quantity):
@@ -160,36 +178,22 @@ def add_item_to_inventory(user_id, item_name, quantity, description):
         cursor.execute("UPDATE users SET inventory = ? WHERE user_id = ?", (json.dumps(inventory), str(user_id)))
         conn.commit()
 
-# Retrieve leaderboard
-def get_leaderboard():
-    with sqlite3.connect(db_path) as conn:
-        cursor = conn.cursor()
-        cursor.execute("""
-        SELECT user_id, crowns
-        FROM user_data
-        ORDER BY crowns DESC
-        LIMIT 10
-        """)
-        return cursor.fetchall()
-    
-
 #Import Store Items
 def load_armory_json():
-    # Get the absolute path to the 'data' folder
-    base_dir = os.path.dirname(os.path.abspath(__file__))
-    armory_path = os.path.join(base_dir, "..", "data", "armory_items.json")
+
+    armory_link = os.path.join(armory_path)
     
     # Connect to the database file
-    armory_connection = sqlite3.connect(armory_path)
+    #armory_connection = sqlite3.connect(armory_link)
       
-    with open(armory_connection, 'r') as file:
+    with open(armory_link, 'r') as file:
         return json.load(file)
 
 def import_armory_items():
     try: 
-        # Load the items from the JSON file
+        # Load the items from the JSON file           
         armory_items = load_armory_json()
-    
+        
         # Open a connection to the database
         with sqlite3.connect(db_path) as conn:
             cursor = conn.cursor()

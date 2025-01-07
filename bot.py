@@ -1,21 +1,15 @@
 import discord
 from discord.ext import commands
 import os
-import json
 from dotenv import load_dotenv
-from utils.database import init_db, add_user, update_crowns, add_item_to_inventory, modify_crowns
+from utils.database import init_db, add_user, update_crowns, add_item_to_inventory, import_armory_items
 
-# Load configuration
-#with open("config.json") as f:
-#    config = json.load(f)
-
-# Load the .env file
+# Load the .env file to get the token and prefix for the bot
 load_dotenv()
-
 token = os.getenv("token")
 prefix = os.getenv("prefix")
 
-# Set up the bot
+# Set up the bot's prefix and intents
 bot = commands.Bot(command_prefix=prefix, intents=discord.Intents.all())
 
 # BOT EVENTS ***************************************************
@@ -25,7 +19,7 @@ bot = commands.Bot(command_prefix=prefix, intents=discord.Intents.all())
 async def on_ready():
     print(f'Logged in as {bot.user}')
     init_db()  # Initialize the database when the bot starts
-    #import_armory_items()  #Import Shop Items when the bot starts
+    import_armory_items()  #Import Shop Items when the bot starts
 
     # Automatically load cogs from the "cogs" folder
     for filename in os.listdir("./cogs"):

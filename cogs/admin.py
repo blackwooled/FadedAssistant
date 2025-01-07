@@ -1,10 +1,11 @@
 from discord.ext import commands
 import os
 import sqlite3
+from dotenv import load_dotenv
 
-#Finding user_data.db in data folder
-base_dir = os.path.dirname(os.path.abspath(__file__))
-db_path = os.path.join(base_dir, "..", "data", "user_data.db")
+# Load .env file to get user_data.db path
+load_dotenv()
+db_path = os.getenv("db_path")
 
 class Admin(commands.Cog):
     def __init__(self, bot):
