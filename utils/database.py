@@ -1,3 +1,5 @@
+import discord
+from discord.ext import commands
 import sqlite3
 import json
 import os
@@ -5,14 +7,11 @@ from dotenv import load_dotenv
 
 # List Of Database Functions
 
-#Finding user_data.db in data folder
-#base_dir = os.path.dirname(os.path.abspath(__file__))
-#db_path = os.path.join(base_dir, "..", "data", "user_data.db")
-
 # Load .env file to get user_data.db path
 load_dotenv()
 db_path = os.getenv("db_path")
 armory_path = os.getenv("armory_path")
+admin_roles = os.getenv("admin_roles", "").split(",")
 
 # SQLite Database initialization
 
@@ -35,156 +34,13 @@ def init_db():
         price INTEGER NOT NULL
     )
     """)
-
     conn.commit()
     conn.close()
-
-# Add a new user to the database
-def add_user(user_id):
-    with sqlite3.connect(db_path) as conn:
-        cursor = conn.cursor()
-        cursor.execute("""
-        INSERT OR IGNORE INTO user_data (user_id, crowns, inventory)
-        VALUES (?, ?, ?)
-        """, (user_id, 0, "[]"))
-        conn.commit()
-
-# Retrieve user data
-def get_user_data(user_id):
-    with sqlite3.connect(db_path) as conn:
-        cursor = conn.cursor()
-        cursor.execute("SELECT crowns, inventory FROM user_data WHERE user_id = ?", (user_id,))
-        return cursor.fetchone()
-
-# Update crowns for a user
-def update_crowns(user_id, amount):
-    with sqlite3.connect(db_path) as conn:
-        cursor = conn.cursor()
-
-        # Check if the user exists
-        cursor.execute("SELECT 1 FROM user_data WHERE user_id = ?", (user_id,))
-        result = cursor.fetchone()
-
-        if result is None:
-            # User doesn't exist, add them to the database
-            print(f"Adding new user {user_id} to the database.")
-            cursor.execute("""
-            INSERT INTO user_data (user_id, crowns, inventory)
-            VALUES (?, ?, ?)
-            """, (user_id, 0, "[]"))
-
-        # Update the crowns for the user
-        print(f"Updating crowns for user {user_id}. Adding {amount} crowns.")
-        cursor.execute("""
-        UPDATE user_data
-        SET crowns = crowns + ?
-        WHERE user_id = ?
-        """, (amount, user_id))
-
-        conn.commit()
-
-# Function To View Inventory
-def view_inventory(user_id):
-    with sqlite3.connect(db_path) as conn:
-        cursor = conn.cursor()
-        cursor.execute("SELECT inventory FROM users WHERE user_id = ?", (str(user_id),))
-        result = cursor.fetchone()
-        if result:
-            inventory = json.loads(result[0])
-            return inventory
-        else:
-            return []
-
-# Retrieve leaderboard
-def get_leaderboard():
-    with sqlite3.connect(db_path) as conn:
-        cursor = conn.cursor()
-        cursor.execute("""
-        SELECT user_id, crowns
-        FROM user_data
-        ORDER BY crowns DESC
-        LIMIT 10
-        """)
-        return cursor.fetchall()
-    
-
-# Add or Remove Crowns from a user (!!Admin Only!!)
-def modify_crowns(user_id, amount):
-    with sqlite3.connect(db_path) as conn:
-        cursor = conn.cursor()
-        cursor.execute("SELECT crowns FROM users WHERE user_id = ?", (str(user_id),))
-        result = cursor.fetchone()
-        if result:
-            current_crowns = result[0]
-            remaining_crowns = max(0, current_crowns + amount)
-            cursor.execute("UPDATE users SET crowns = ? WHERE user_id = ?", (remaining_crowns, str(user_id)))
-            conn.commit()
-            return remaining_crowns
-        else:
-            return None
-
-# Function To Remove Items From The Inventory (!!Admin Only!!)
-def remove_item_from_inventory(user_id, item_name, quantity):
-    with sqlite3.connect(db_path) as conn:
-        cursor = conn.cursor()
-        
-        # Get the user's current inventory
-        cursor.execute("SELECT inventory FROM users WHERE user_id = ?", (str(user_id),))
-        result = cursor.fetchone()
-        if result:
-            inventory = json.loads(result[0])
-        else:
-            inventory = []
-        
-        # Update or remove the item
-        updated_inventory = []
-        for item in inventory:
-            if item["item_name"] == item_name:
-                if item["quantity"] > quantity:
-                    item["quantity"] -= quantity
-                    updated_inventory.append(item)
-                elif item["quantity"] == quantity:
-                    continue  # Remove the item entirely
-            else:
-                updated_inventory.append(item)
-        
-        # Save the updated inventory back to the database
-        cursor.execute("UPDATE users SET inventory = ? WHERE user_id = ?", (json.dumps(updated_inventory), str(user_id)))
-        conn.commit()
-
-# Add Item To Inventory (!!Admin Only!!)
-def add_item_to_inventory(user_id, item_name, quantity, description):
-    with sqlite3.connect(db_path) as conn:
-        cursor = conn.cursor()
-        
-        # Get the user's current inventory
-        cursor.execute("SELECT inventory FROM users WHERE user_id = ?", (str(user_id),))
-        result = cursor.fetchone()
-        if result:
-            inventory = json.loads(result[0])
-        else:
-            inventory = []
-        
-        # Check if the item already exists in the inventory
-        for item in inventory:
-            if item["item_name"] == item_name:
-                item["quantity"] += quantity
-                break
-        else:
-            # Add new item to the inventory
-            inventory.append({"item_name": item_name, "quantity": quantity, "description": description})
-        
-        # Save the updated inventory back to the database
-        cursor.execute("UPDATE users SET inventory = ? WHERE user_id = ?", (json.dumps(inventory), str(user_id)))
-        conn.commit()
 
 #Import Store Items
 def load_armory_json():
 
     armory_link = os.path.join(armory_path)
-    
-    # Connect to the database file
-    #armory_connection = sqlite3.connect(armory_link)
       
     with open(armory_link, 'r') as file:
         return json.load(file)
@@ -218,7 +74,127 @@ def import_armory_items():
 
     except FileNotFoundError:
         print("The JSON file could not be found.")
-            
+
+# Add a new user to the database
+def add_user(user_id):
+    with sqlite3.connect(db_path) as conn:
+        cursor = conn.cursor()
+        cursor.execute("""
+        INSERT OR IGNORE INTO user_data (user_id, crowns, inventory)
+        VALUES (?, ?, ?)
+        """, (user_id, 0, "[]"))
+        conn.commit()
+
+# Update crowns for a user
+def update_crowns(user_id, amount, name):
+    with sqlite3.connect(db_path) as conn:
+        cursor = conn.cursor()
+        
+        # Check if the user exists
+        cursor.execute("SELECT 1 FROM user_data WHERE user_id = ?", (user_id,))
+        result = cursor.fetchone()
+
+        if result is None:
+            # User doesn't exist, add them to the database
+            print(f"Adding new user {name.display_name} to the database.")
+            cursor.execute("""
+            INSERT INTO user_data (user_id, crowns, inventory)
+            VALUES (?, ?, ?)
+            """, (user_id, 0, "[]"))
+
+        # Update the crowns for the user
+        print(f"Updating Crowns for user {name.display_name}. Adding {amount} Crowns.")
+        cursor.execute("""
+        UPDATE user_data
+        SET crowns = crowns + ?
+        WHERE user_id = ?
+        """, (amount, user_id))
+
+        conn.commit()
+    return result
+
+# Retrieve user data
+def get_user_data(user_id):
+    with sqlite3.connect(db_path) as conn:
+        cursor = conn.cursor()
+        cursor.execute("SELECT crowns, inventory FROM user_data WHERE user_id = ?", (user_id,))
+        return cursor.fetchone()
+      
+# Retrieve leaderboard
+def get_leaderboard():
+    with sqlite3.connect(db_path) as conn:
+        cursor = conn.cursor()
+        cursor.execute("""
+        SELECT user_id, crowns
+        FROM user_data
+        ORDER BY crowns DESC
+        LIMIT 10
+        """)
+        return cursor.fetchall()
+    
+# give_crowns
+def give_crowns(giver, amount, recipient):
+    with sqlite3.connect(db_path) as conn:
+        cursor = conn.cursor()
+        cursor.execute("SELECT crowns FROM user_data WHERE user_id = ?", (str(giver),))
+        giver_crowns = cursor.fetchone()
+        
+        if not giver_crowns or giver_crowns[0] < amount:
+            return False 
+
+        cursor.execute("UPDATE user_data SET crowns = crowns - ? WHERE user_id = ?", (amount, str(giver)))
+
+        # Get the recipient's balance
+        cursor.execute("SELECT crowns FROM user_data WHERE user_id = ?", (str(recipient),))
+        recipient_balance = cursor.fetchone()
+        if not recipient_balance:
+            # If the recipient doesn't exist in the database, add them
+            cursor.execute("INSERT INTO user_data (user_id, crowns, inventory) VALUES (?, ?, ?)", 
+                           (str(recipient), amount, json.dumps([])))
+        else:
+            # Add crowns to the recipient
+            cursor.execute("UPDATE user_data SET crowns = crowns + ? WHERE user_id = ?", (amount, str(recipient)))
+        conn.commit()
+        return True
+
+# ADMIN ONLY COMMANDS **********************************************************************************
+
+# Admin Role Check
+def is_admin():
+    def predicate(ctx):
+        return any(role.name in admin_roles for role in ctx.author.roles)
+    return commands.check(predicate)
+
+# Function To Add or Remove Items From The Inventory
+def manage_inventory(user_id, item_name, quantity):
+    
+    with sqlite3.connect(db_path) as conn:
+        cursor = conn.cursor()
+        
+        # Get the user's current inventory
+        cursor.execute("SELECT inventory FROM user_data WHERE user_id = ?", (str(user_id),))
+        result = cursor.fetchone()
+        if result:
+            inventory = json.loads(result[0])  # Parse the JSON string into a Python list
+        else:
+            inventory = []
+        
+        # Check if the item already exists in the inventory
+        for item in inventory:
+            if item["item_name"] == item_name:
+                item["quantity"] += quantity
+                # Remove the item if quantity drops to 0 or below
+                if item["quantity"] <= 0:
+                    inventory.remove(item)
+                break
+        else:
+            # Add new item to the inventory if quantity is positive
+            if quantity > 0:
+                inventory.append({"item_name": item_name, "quantity": quantity})
+        
+        # Save the updated inventory back to the database
+        cursor.execute("UPDATE user_data SET inventory = ? WHERE user_id = ?", (json.dumps(inventory), str(user_id)))
+        conn.commit()
 
 # TROUBLESHOOTING FUNCTION TO EXPORT USER_DATA TABLE FROM DATABASE TO JSON FILE
 def export_users_to_json():

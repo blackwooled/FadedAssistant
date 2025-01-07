@@ -12,8 +12,8 @@ class Store(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    # DISPLAY STORE. !store
-    @commands.command(name="store")
+    # DISPLAY STORE. !store !s
+    @commands.command(name="store", aliases=["s"])
     async def store(self, ctx):
         # Fetch store items from the database
         with sqlite3.connect(db_path) as conn:
