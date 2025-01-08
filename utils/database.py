@@ -31,7 +31,11 @@ def init_db():
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS armory_data (
         item_name TEXT PRIMARY KEY,
-        price INTEGER NOT NULL
+        price INTEGER NOT NULL,
+        item_description TEXT,
+        category_tag TEXT,
+        species_tag TEXT,
+        item_icon TEXT
     )
     """)
     conn.commit()
@@ -55,25 +59,45 @@ def import_armory_items():
             cursor = conn.cursor()
 
             # Insert items into the store_items table
-            for item_name, item_data in armory_items.items():
-                price = item_data["price"]
+            for item_name, item_data, in armory_items.items():
 
                 # Use INSERT OR REPLACE to ensure we don't add duplicate items
-                cursor.execute("""
-                INSERT OR REPLACE INTO armory_data (item_name, price)
-                VALUES (?, ?)
-                """, (item_name, price))
+                try:
+                    cursor.execute("""
+                    INSERT OR REPLACE INTO armory_data (item_name, price, item_description, category_tag, species_tag, item_icon)
+                    VALUES (?, ?, ?, ?, ?, ?)
+                    """, (item_name, item_data["price"], item_data["item_description"], item_data["category_tag"], item_data["species_tag"], item_data.get("item_icon")))
+                except sqlite3.Error as e:
+                    print(f"Error occurred while inserting {item_name}: {e}")
 
             # Commit the transaction to save changes
             conn.commit()
         
-        print("Items successfully added to the store!")
-
-    except sqlite3.Error as e:
-        print(f"Error occurred while inserting items: {e}")
-
+        print("Items successfully added to the store!")  
     except FileNotFoundError:
         print("The JSON file could not be found.")
+
+# embed builder function
+def embed_builder(title, description, color=discord.Color.dark_gold(), fields=None, thumbnail_url=None, image_url=None, footer_text=None):
+    embed = discord.Embed(title=title, description=description, color=color)
+
+    # Add fields to the embed if provided
+    if fields:
+        for name, value in fields.items():
+            embed.add_field(name=name, value=value, inline=False)
+    
+    # Optionally add a footer or image here if needed
+    if thumbnail_url:
+        embed.set_thumbnail(url=thumbnail_url)
+    
+    if image_url:
+        embed.set_image(url=image_url)
+    
+    if footer_text:
+        embed.set_footer(text=footer_text)
+    else:
+        embed.set_footer(text="Use !help to learn more about commands.")
+    return embed
 
 # Add a new user to the database
 def add_user(user_id):

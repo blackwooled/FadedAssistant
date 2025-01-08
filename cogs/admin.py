@@ -2,7 +2,7 @@ from discord.ext import commands
 import os
 import sqlite3
 from dotenv import load_dotenv
-from utils.database import manage_inventory, is_admin
+from utils.database import manage_inventory, is_admin, embed_builder
 
 # Load .env file to get user_data.db path
 load_dotenv()
@@ -14,10 +14,23 @@ class Admin(commands.Cog):
         self.bot = bot
     
     
-    @commands.group(name="admin", invoke_without_command=True)
+    @commands.group(name="admin", invoke_without_command=True, hidden=True)
     @is_admin()
     async def admin_group(self, ctx):
         await ctx.send("Welcome to the admin section. Available admin commands: money, items")
+        #embed = embed_builder(
+        #title="!Admin",
+        #description="Welcome to the admin section. Available admin commands:",
+        #)
+        #for command in :
+        #    if not command.hidden:  # Skip commands marked as hidden
+        #        aliases = f" or !{'or !'.join(command.aliases)}" if command.aliases else ""
+        #        embed.add_field(
+        #            name=f"!{command.name}{aliases}",
+        #            value=command.help or "No description available.",
+        #            inline=False
+        #        )
+        #await ctx.send(embed=embed)
 
     # ADD OR REMOVE ITEMS
     @admin_group.command(name="items")

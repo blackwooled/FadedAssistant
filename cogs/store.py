@@ -2,6 +2,7 @@ from discord.ext import commands
 import os
 import sqlite3
 from dotenv import load_dotenv
+from utils.database import embed_builder
 
 # Load .env file to get user_data.db path
 load_dotenv()
@@ -13,24 +14,30 @@ class Store(commands.Cog):
         self.bot = bot
 
     # DISPLAY STORE. !store !s
-    @commands.command(name="store", aliases=["s"])
+    @commands.command(name="store", aliases=["s"], help="Opens up the store for some fashionable shopping~")
     async def store(self, ctx):
         # Fetch store items from the database
         with sqlite3.connect(db_path) as conn:
             cursor = conn.cursor()
-            cursor.execute("SELECT item_name, price FROM armory_data")
+            cursor.execute("SELECT item_name, price, item_description FROM armory_data")
             armory_data = cursor.fetchall()
 
         if not armory_data:
             await ctx.send("The store is empty!")
             return
-
-        store_message = "Welcome to the Grim Armory! Here are the currently available items:\n\n"
-        for item_name, price in armory_data:
-            store_message += f"{item_name}: {price} Crowns\n"
-
-        store_message += "\nUse `!buy <item>` to buy an item from the store."
-        await ctx.send(store_message)
+        
+        embed = embed_builder(
+        title="Welcome to the Grim Armory!",
+        description="Here are the currently available items:\n\n",
+        footer_text="\nUse `!buy <item>` to buy an item from the store."
+        )
+        for item_name, price, item_description in armory_data:
+            embed.add_field(
+                name=f"{item_name}: {price} Crowns",
+                value=f"{item_description}" or "No description available.",
+                inline=True
+            )
+        await ctx.send(embed=embed)
 
 
     # BUY ITEMS. !buy

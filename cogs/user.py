@@ -3,7 +3,7 @@ from discord.ext import commands
 import os
 import json
 from dotenv import load_dotenv
-from utils.database import get_user_data, get_leaderboard, give_crowns
+from utils.database import get_user_data, get_leaderboard, give_crowns, embed_builder
 
 # Load .env file to get user_data.db path
 load_dotenv()
@@ -14,18 +14,18 @@ class User(commands.Cog):
         self.bot = bot
 
     #BALANCE. !balance
-    @commands.command()
+    @commands.command(name="balance", help="Shows your current Crowns balance.")
     async def balance(self, ctx):
         user_id = str(ctx.author.id)
         user_data = get_user_data(user_id)
         if user_data:
             crowns, inventory = user_data
-            await ctx.send(f"{ctx.author.display_name}, you have {crowns} Crowns.")
+            await ctx.send(f"Hello {ctx.author.display_name}! You have {crowns} Crowns.")
         else:
             await ctx.send("You don't have any funds yet. Start chatting to earn Crowns!")
 
     #GIVE MONEY TO OTHER USER. !give
-    @commands.command(name="give")
+    @commands.command(name="give", help="Gift Crowns to another user.\nSyntax: !give <amount> @user")
     async def give(self, ctx, amount: int, member: commands.MemberConverter):
             
             if amount <= 0:
@@ -48,7 +48,7 @@ class User(commands.Cog):
 
 
     # DISPLAY PROFILE. !profile !p
-    @commands.command(name="profile", aliases=["p"])
+    @commands.command(name="profile", aliases=["p"], help="Displays your profile.")
     async def profile(self, ctx):
         user_id = str(ctx.author.id)
 
@@ -65,14 +65,23 @@ class User(commands.Cog):
             inventory_list = "\n".join([f"{item['item_name']} [x{item['quantity']}]" for item in inventory])
         else:
             inventory_list = "No items."
-
-        #await ctx.send(f"Your inventory:\n{inventory_list}")
         
         user = await self.bot.fetch_user(int(user_id))
-        await ctx.send(f"{user.display_name}'s Profile:\nCrowns: {crowns}\nInventory: {inventory_list}")
+        avatar_url = user.avatar.url
+        fields = {
+        "Inventory": str(inventory_list)
+        }
+        
+        embed = embed_builder(
+        title=f"{user.display_name}'s Profile",
+        description=f"{user.display_name}'s bank has {crowns} Crowns.",
+        fields=fields,
+        thumbnail_url=avatar_url
+        )
+        await ctx.send(embed=embed)
 
     # DISPLAY INVENTORY. !inventory
-    @commands.command(name="inventory", aliases=["i"])
+    @commands.command(name="inventory", aliases=["i"], help="Shows what you've collected in your inventory so far.")
     async def inventory(self, ctx):
         user_id = str(ctx.author.id)
         
@@ -93,7 +102,7 @@ class User(commands.Cog):
 
 
     #LEADERBOARD. !leaderboard
-    @commands.command(name="leaderboard", aliases=["l"])
+    @commands.command(name="leaderboard", aliases=["l"], help="Displays the top 10 leaderboard.")
     async def leaderboard(self, ctx):
         leaderboard_data = get_leaderboard()
         leaderboard_message = "🏆 **Leaderboard** 🏆\n"
@@ -104,16 +113,21 @@ class User(commands.Cog):
         await ctx.send(leaderboard_message)
 
     #HELP. !help
-    @commands.command(name="help")
+    @commands.command(name="help", aliases=["h"], hidden=True)
     async def help(self, ctx):
         
-        embed = discord.Embed(
-            title="Bot Commands",
-            description="Here is a list of commands you can use with this bot:\n ",
-            color=discord.Color.dark_gold()
+        embed = embed_builder(
+        title="Bot Commands",
+        description="Here is a list of commands you can use with this bot:",
         )
-        
-        
+        for command in self.bot.commands:
+            if not command.hidden:  # Skip commands marked as hidden
+                aliases = f" or !{'or !'.join(command.aliases)}" if command.aliases else ""
+                embed.add_field(
+                    name=f"!{command.name}{aliases}",
+                    value=command.help or "No description available.",
+                    inline=False
+                )
         await ctx.send(embed=embed)
 
 async def setup(bot):

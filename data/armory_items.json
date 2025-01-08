@@ -1,9 +1,168 @@
 {
-  "Sword": {"price": 8},
-  "Shield": {"price": 5},
-  "Potion": {"price": 3},
+  "Sword": {
+        "price": 8,
+        "item_description":"Debugging is the best.",
+        "category_tag": "",
+        "species_tag": "",
+        "item_icon": ""
+   },
+  "Shield": {
+        "price": 5,
+        "item_description": "I'm here to troubleshoot things leave me ALONE",
+        "category_tag": "",
+        "species_tag": "",
+        "item_icon": ""
+    },
+  "Potion": {
+        "price": 3,
+        "item_description": "I'm having such a great time troubleshooting.",
+        "category_tag": "",
+        "species_tag": "",
+        "item_icon": ""
+    },
 
-  "Character Slot 3": {"price": 30000},
-  "Character Slot 4": {"price": 40000},
-  "Character Slot 5": {"price": 50000}
+
+    "Night's Kiss": {
+        "price": 7000,
+        "item_description": "This blackened ring is smooth and cold to the touch. An opaque dark red gem is encased within the middle, its swirling patterns ever changing as it seems to absorb any warmth in its vicinity. The faint magic aura emanating from this object protects vampires from the sun's harmful effects, allowing them to walk in broad daylight. (Note: this ring protects only against regular sunlight, it does not diminish the effect of life and light based magic.)",
+        "category_tag": "Permanent Item",
+        "species_tag": "Vampire Centric",
+        "item_icon": ""
+    },
+    "Flask of Keeping": {
+        "price": 3500,
+        "item_description": "This ornate flask made of dark wood and silver engravings is heavier than it appears. Its enchantment enables the capacity of the flask to be slightly higher than what an object of this size should contain. It is specifically designed to keep fresh blood in a drinkable state for up to 2 weeks. It can store approximately an adult vampire meal's worth of blood. Its dimensions are approximately 30cmx4cmx20cm and it can contain up to 2 L of liquid. While many may find use in this flask, its properties are tuned specifically towards preserving blood, and as such, it won't work as effectively with other liquids or foods.",
+        "category_tag": "Permanent Item",
+        "species_tag": "Vampire Centric",
+        "item_icon": ""
+    },
+    "Silver Bite": {
+        "price": 5000,
+        "item_description": "Sometimes referred derogatorily as a muzzle, this set of braces can aid a vampire in suppressing their bloodlust - at least temporarily. Traditionally crafted in the shape of two drop-like beads with appropriate attachment points measured to size, these pieces of jewellery are worn against the palate, flush against the rear of a vampire's fangs. They are commonly used by lowbloods and by young vampires still learning how to control their bloodlust. This crude instrument is ordinarily harmless and comfortable, but as a vampire begins to lose control and their fangs protrude from their gums, the silver burns against their fangs, suppressing their thirst for blood and bringing them back to the present moment.\nWhile the runes embedded over them are the true cause of this effect, silver being the perfect catalyst for this reaction has caused many legends to spread about it being a holy metal capable of warding off creatures of the night.",
+        "category_tag": "Permanent Item",
+        "species_tag": "Vampire Centric",
+        "item_icon": ""
+    },
+    "Moxie": {
+        "price": 3000,
+        "item_description": "As regeneration abilities are commonly based in life magic, many inferni and vampires had to resort to different methods to survive mortal wounds. Moxie is the latest creation and the most commonly found in Syros; it takes the form of a purple liquid which is generally administered through a syringe or epipen. This item works immediately and empowers wound regeneration, allowing demons and vampires to quickly recover from mortal wounds and to even regain their stamina and continue fighting. Please note: this substance is harmful to Fey, Humans, and Celestials.",
+        "category_tag": "Consumable Item",
+        "species_tag": "Demon Centric,Vampire Centric",
+        "item_icon": ""
+    },
+    "Fuse": {
+        "price": 3500,
+        "item_description": "This magic charm takes the form of a scroll covered in sigils and stamped with a wax emblem. The scroll burns upon use, in a bright blue-green flame. It grants the user additional energy when casting spells based on the law of equivalent exchange, boosting the power of their spells by 30% for 3 turns. Only one Fuse can be used at a time, as multiple uses would destabilise the magic and cause unpredictable effects even to the wielder.",
+        "category_tag": "Consumable Item",
+        "species_tag": "Warlock/Strigae Centric",
+        "item_icon": ""
+    },
+    "Tether": {
+        "price": 10000,
+        "item_description": "A Tether is an additional connection between a thrall and their master. Traditionally, it takes the shape of a choker, its make varying based on the time period and master. Nowadays, it's more common for a Tether to be customised into a more discreet accessory - especially for thralls working undercover. The most important element is an enchanted piece of jewellery - it's generally crafted in the form of a gem or brooch, embedded within the item. The Tether allows a thrall to channel their master's energy more easily, enabling them to use more powerful abilities.",
+        "category_tag": "Permanent Item",
+        "species_tag": "Strigoi Centric",
+        "item_icon": ""
+    },
+    "Featherfall Boots": {
+        "price": 12000,
+        "item_description": "Once worn, these boots feel uncharacteristically light, and each step taken in them feels almost weightless. The rune arrangement pattern wraps around the leather over the leg in loose, winding spirals. This item absorbs and dampens the impact caused by falling from great heights, enabling the user to fall from up to 50 m with little to no repercussions. Remember to land on your feet!",
+        "category_tag": "Permanent Item",
+        "species_tag": "*",
+        "item_icon": ""
+    },
+    "Amo's Embrace": {
+        "price": 12000,
+        "item_description": "A copper necklace of wondrous make. Once activated, it releases a veil-like barrier that shrouds the wielder's form and protects them from flames of both ordinary and magical nature. The veil lasts 3 turns and can be used once a day. While active, the wielder is completely protected from fire based damage. The appearance of the veil is dark and dense, visually degrading as its activation time elapses; once the 3 turns expire, scorching burning holes will begin to tear through the veil, and in an instant, it will disappear in a fine dust of ash, leaving the wearer once more vulnerable to flames.",
+        "category_tag": "Permanent Item",
+        "species_tag": "*",
+        "item_icon": ""
+    },
+    "Velvet Steps": {
+        "price": 8000,
+        "item_description": "This enchantment is traditionally bound to pieces of jewellery that adorn a person's shoes - like metal tips or spurs. The spell is activated by clicking the heels together twice. Once active, the user's steps are completely silent for 6 turns. It can be used twice a day.",
+        "category_tag": "Permanent Item",
+        "species_tag": "*",
+        "item_icon": ""
+    },
+    "Liquid Insight": {
+        "price": 4000,
+        "item_description": "Coveted amidst those that are unable to perceive the true appearance of otherkin, this faint cream coloured potion grants the user the ability to glance past glamours to discover a supernatural's true appearance. This enhancement lasts 3 rp turns before its effects expire. During those 3 turns, the user is able to see past the glamours of individuals around them. This vial contains enough potion for 2 uses. If the target supernatural is using an Intensified Glamour, this potion will not be able to reveal any anomaly in them and they will appear as if their glamoured form is their true form.",
+        "category_tag": "Consumable Item",
+        "species_tag": "*",
+        "item_icon": ""
+    },
+    "Veil Piercer": {
+        "price": 17000,
+        "item_description": "These goggles have a durable metal frame and sport thick, opaque lenses. The colour of the lenses varies depending on the warlock's choice of alchemical process used to create them. Once someone dons them, the lenses reveal the world around them. A user will be able to perceive the true form underneath the glamour of lower class species (Namely: Dominions, weaker Kitsunes, Nephilim/Nephalem, Succubi/Incubi, weaker Onis, Dryads, Nymphs, Lowbloods, weaker Aristocrats). If the target supernatural is using an Intensified Glamour, this item will not be able to reveal any anomaly in them and they will appear as if their glamoured form is their true form.",
+        "category_tag": "Permanent Item",
+        "species_tag": "*",
+        "item_icon": ""
+    },
+    "Mind Bridge": {
+        "price": 17000,
+        "item_description": "A thin circlet, traditionally made of precious metals, but often customised by the warlock creating it. It is worn over the head and allows the user to talk to others as if using telepathy.",
+        "category_tag": "Permanent Item",
+        "species_tag": "*",
+        "item_icon": ""
+    },
+    "Ancestors' Grace": {
+        "price": 20000,
+        "item_description": "This item grants protection against chaos magic. It presents itself in the form of a relic- it can be an archangel's feather, the bone of a powerful angel, or some other artefact imbued with holy magic. It's generally encased in a protected glass ampoule, secured and sealed with further magic binds written over scrolls and wrapped around the glass surface, both to further protect it and channel its properties. It can be hung from a necklace or worked into another article of clothing. It is generally able to protect from most chaos magic based damage, although it works best over the head and middle of the body and generally leaves limbs slightly more vulnerable to damage.",
+        "category_tag": "Permanent Item",
+        "species_tag": "*",
+        "item_icon": ""
+    },
+    "Old Ones' Promise": {
+        "price": 20000,
+        "item_description": "These dark leather binds grant protection against holy magic. Their preparation involves pulverising a chaos magic imbued relic, like the talons or horns of an archdemon, through a particular process that preserves their qualities and then imbues them into the leather material. It can generally be fashioned in the form of a necklace or other article of clothing. It is generally able to protect from most holy magic based damage, although it works best over the head and middle of the body and generally leaves limbs slightly more vulnerable to damage.",
+        "category_tag": "Permanent Item",
+        "species_tag": "*",
+        "item_icon": ""
+    },
+    "Second Heartbeat": {
+        "price": 35000,
+        "item_description": "This rare gem is crystal clear, overall shaped to an ovoid roughly the size of a heart, its many polished facets shining and covered in winding runes that interlock with one another. It is said that not many warlocks in Tokyo know how to create it, and even fewer are willing to do so. The law of equivalent exchange requires a soul to be consumed in order to create this gem, and it is not something that is done lightly.\nThis item will bring back to life a recently deceased soul. It must be used within 100 minutes of the person's passing, otherwise it will not take effect. It will mend any physical damage the recently deceased has sustained as their cause of death, but this spell won't be able to rejuvenate a person dying of old age or cure a chronic illness that caused their passing. This, unfortunately, still extends to the Corruption's detrimental effects. ",
+        "category_tag": "Consumable Item",
+        "species_tag": "*",
+        "item_icon": ""
+    },
+  
+
+
+    "Character Slot 3": {
+        "price": 30000,
+        "item_description": "There's no two without three, ...",
+        "category_tag": "User Upgrades",
+        "species_tag": "",
+        "item_icon": ""
+    },
+    "Character Slot 4": {
+        "price": 40000,
+        "item_description": "...and the fourth one is soon here!",
+        "category_tag": "User Upgrades",
+        "species_tag": "",
+        "item_icon": ""
+    },
+    "Character Slot 5": {
+        "price": 50000,
+        "item_description": "A handful of characters.",
+        "category_tag": "User Upgrades",
+        "species_tag": "",
+        "item_icon": ""
+    },
+    "Character Slot 6": {
+        "price": 60000,
+        "item_description": "A hoard of characters.",
+        "category_tag": "User Upgrades",
+        "species_tag": "",
+        "item_icon": ""
+    },
+    "Character Slot 7": {
+        "price": 70000,
+        "item_description": "A LEGION of characters.",
+        "category_tag": "User Upgrades",
+        "species_tag": "",
+        "item_icon": ""
+    }
 }
