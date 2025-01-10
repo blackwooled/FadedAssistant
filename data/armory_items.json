@@ -2,21 +2,21 @@
   "Sword": {
         "price": 8,
         "item_description":"Debugging is the best.",
-        "category_tag": "",
+        "category_tag": "Debug Item",
         "species_tag": "",
         "item_icon": ""
    },
   "Shield": {
         "price": 5,
         "item_description": "I'm here to troubleshoot things leave me ALONE",
-        "category_tag": "",
+        "category_tag": "Debug Item",
         "species_tag": "",
         "item_icon": ""
     },
   "Potion": {
         "price": 3,
         "item_description": "I'm having such a great time troubleshooting.",
-        "category_tag": "",
+        "category_tag": "Debug Item",
         "species_tag": "",
         "item_icon": ""
     },
@@ -133,35 +133,35 @@
     "Character Slot 3": {
         "price": 30000,
         "item_description": "There's no two without three, ...",
-        "category_tag": "User Upgrades",
+        "category_tag": "User Upgrade",
         "species_tag": "",
         "item_icon": ""
     },
     "Character Slot 4": {
         "price": 40000,
         "item_description": "...and the fourth one is soon here!",
-        "category_tag": "User Upgrades",
+        "category_tag": "User Upgrade",
         "species_tag": "",
         "item_icon": ""
     },
     "Character Slot 5": {
         "price": 50000,
         "item_description": "A handful of characters.",
-        "category_tag": "User Upgrades",
+        "category_tag": "User Upgrade",
         "species_tag": "",
         "item_icon": ""
     },
     "Character Slot 6": {
         "price": 60000,
         "item_description": "A hoard of characters.",
-        "category_tag": "User Upgrades",
+        "category_tag": "User Upgrade",
         "species_tag": "",
         "item_icon": ""
     },
     "Character Slot 7": {
         "price": 70000,
         "item_description": "A LEGION of characters.",
-        "category_tag": "User Upgrades",
+        "category_tag": "User Upgrade",
         "species_tag": "",
         "item_icon": ""
     }
