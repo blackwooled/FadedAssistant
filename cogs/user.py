@@ -59,6 +59,7 @@ class User(commands.Cog):
             return
 
         crowns, inventory = result
+        print(inventory)
         inventory = json.loads(inventory)  # Convert the string list back to a Python list
 
         if inventory:
