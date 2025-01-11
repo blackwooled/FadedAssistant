@@ -12,6 +12,7 @@ load_dotenv()
 db_path = os.getenv("db_path")
 armory_path = os.getenv("armory_path")
 admin_roles = os.getenv("admin_roles", "").split(",")
+export_path = os.getenv("userexport_path")
 
 # SQLite Database initialization
 
@@ -222,25 +223,24 @@ def manage_inventory(user_id, item_name, quantity):
 
 # TROUBLESHOOTING FUNCTION TO EXPORT USER_DATA TABLE FROM DATABASE TO JSON FILE
 def export_users_to_json():
-    conn = sqlite3.connect(db_path)
-    cursor = conn.cursor()
+    export_folder = os.path.dirname(export_path)
+    if not os.path.exists(export_folder):
+        os.makedirs(export_folder)
 
-    # Fetch all user data
-    cursor.execute("SELECT * FROM user_data")
-    rows = cursor.fetchall()
+    with sqlite3.connect(db_path) as conn:
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM user_data")
+        
+        # Get column names for the dictionary keys
+        columns = [description[0] for description in cursor.description]
+        
+        # Fetch all rows
+        rows = cursor.fetchall()
+        
+        # Convert rows to a list of dictionaries
+        data = [dict(zip(columns, row)) for row in rows]
 
-    # Convert the data into a dictionary format
-    data = {}
-    for row in rows:
-        user_id, crowns, inventory = row
-        data[user_id] = {
-            "Crowns": crowns,
-            "Inventory": inventory
-        }
-
-    # Write the data to a JSON file with indenting
-    with open("user_data.json", "w") as json_file:
+    with open(export_path, "w") as json_file:
         json.dump(data, json_file, indent=4)
 
-    conn.close()
-    print("Data exported to 'user_data.json'.")
+    return export_path  # Return the file name

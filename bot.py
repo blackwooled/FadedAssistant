@@ -40,7 +40,6 @@ async def on_member_join(member):
     user_id = str(member.id)
     add_user(user_id)
     print(f"Added {member.name} to the database.")
-    #export_users_to_json()
 
 # Track Crowns when a user sends a message
 @bot.event
@@ -55,8 +54,6 @@ async def on_message(message):
     Gains = round(len(message.content)/10)
     # Update user Crowns
     update_crowns(user_id, Gains, name)
-    #Below Function Exports user_data table content to user_data.json. Disable if redundant or inconvenient.
-    #export_users_to_json()
     await bot.process_commands(message)  # Ensure commands still work
 
 

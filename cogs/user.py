@@ -59,7 +59,8 @@ class User(commands.Cog):
             return
 
         crowns, inventory = result
-        print(inventory)
+        # vv debugging line to print inventory into console logs
+        #print(inventory)
         inventory = json.loads(inventory)  # Convert the string list back to a Python list
 
         if inventory:
@@ -96,7 +97,7 @@ class User(commands.Cog):
         inventory = json.loads(inventory)  # Convert the string list back to a Python list
 
         if inventory:
-            inventory_list = "\n".join([f"{item['item_name']} [x{item['quantity']}]: {'itemdescription'}" for item in inventory])
+            inventory_list = "\n".join([f"{item['item_name']} [x{item['quantity']}]" for item in inventory])
             await ctx.send(f"Your inventory:\n{inventory_list}")
         else:
             await ctx.send("Your inventory is empty.")

@@ -3,21 +3,21 @@
         "price": 8,
         "item_description":"Debugging is the best.",
         "category_tag": "Debug Item",
-        "species_tag": "",
+        "species_tag": "n/a",
         "item_icon": ""
    },
   "Shield": {
         "price": 5,
         "item_description": "I'm here to troubleshoot things leave me ALONE",
         "category_tag": "Debug Item",
-        "species_tag": "",
+        "species_tag": "n/a",
         "item_icon": ""
     },
   "Potion": {
         "price": 3,
         "item_description": "I'm having such a great time troubleshooting.",
         "category_tag": "Debug Item",
-        "species_tag": "",
+        "species_tag": "n/a",
         "item_icon": ""
     },
 
@@ -54,7 +54,7 @@
         "price": 3500,
         "item_description": "This magic charm takes the form of a scroll covered in sigils and stamped with a wax emblem. The scroll burns upon use, in a bright blue-green flame. It grants the user additional energy when casting spells based on the law of equivalent exchange, boosting the power of their spells by 30% for 3 turns. Only one Fuse can be used at a time, as multiple uses would destabilise the magic and cause unpredictable effects even to the wielder.",
         "category_tag": "Consumable Item",
-        "species_tag": "Warlock/Strigae Centric",
+        "species_tag": "Warlock Centric",
         "item_icon": ""
     },
     "Tether": {
@@ -134,35 +134,35 @@
         "price": 30000,
         "item_description": "There's no two without three, ...",
         "category_tag": "User Upgrade",
-        "species_tag": "",
+        "species_tag": "n/a",
         "item_icon": ""
     },
     "Character Slot 4": {
         "price": 40000,
         "item_description": "...and the fourth one is soon here!",
         "category_tag": "User Upgrade",
-        "species_tag": "",
+        "species_tag": "n/a",
         "item_icon": ""
     },
     "Character Slot 5": {
         "price": 50000,
         "item_description": "A handful of characters.",
         "category_tag": "User Upgrade",
-        "species_tag": "",
+        "species_tag": "n/a",
         "item_icon": ""
     },
     "Character Slot 6": {
         "price": 60000,
         "item_description": "A hoard of characters.",
         "category_tag": "User Upgrade",
-        "species_tag": "",
+        "species_tag": "n/a",
         "item_icon": ""
     },
     "Character Slot 7": {
         "price": 70000,
         "item_description": "A LEGION of characters.",
         "category_tag": "User Upgrade",
-        "species_tag": "",
+        "species_tag": "n/a",
         "item_icon": ""
     }
 }

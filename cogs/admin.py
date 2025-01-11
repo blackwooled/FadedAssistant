@@ -1,8 +1,9 @@
 from discord.ext import commands
 import os
 import sqlite3
+import discord
 from dotenv import load_dotenv
-from utils.database import manage_inventory, is_admin, embed_builder
+from utils.database import manage_inventory, is_admin, embed_builder, export_users_to_json
 
 # Load .env file to get user_data.db path
 load_dotenv()
@@ -41,7 +42,23 @@ class Admin(commands.Cog):
         else:
             await ctx.send(f"{-quantity} {item_name} has been removed from {member.display_name}'s inventory.")
     
-    
+    @admin_group.command(name="print")
+    async def export_users(self, ctx):
+        #Export the user_data table to a JSON file.
+        try:
+            # Call the database export function
+            file_name = export_users_to_json()
+            
+            # Send the file to the admin
+            if os.path.exists(file_name):
+                await ctx.send(file=discord.File(file_name))
+                await ctx.send("User data exported successfully.")
+            else:
+                await ctx.send("Failed to create the JSON export file.")
+
+        except Exception as e:
+            await ctx.send(f"An error occurred: {e}")
+
     @admin_group.command(name="money")
     async def manage_money(self, ctx, member: commands.MemberConverter, amount: int):
        

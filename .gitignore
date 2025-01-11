@@ -173,3 +173,6 @@ cython_debug/
 # Ignore SQLite database files
 *.sqlite3
 *.db
+
+# Printout of user_data used only for safekeeping and debugging purposes
+user_data.json
