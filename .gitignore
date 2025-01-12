@@ -176,3 +176,7 @@ cython_debug/
 
 # Printout of user_data used only for safekeeping and debugging purposes
 user_data.json
+
+autogit.sh
+tags.txt
+cronlogs.txt
