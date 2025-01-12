@@ -24,7 +24,8 @@ def init_db():
     CREATE TABLE IF NOT EXISTS user_data (
         user_id TEXT PRIMARY KEY,
         crowns INTEGER DEFAULT 0,
-        inventory TEXT DEFAULT '[]'
+        inventory TEXT DEFAULT '[]',
+        characters TEXT DEFAULT '[]'
     )
     """)
 
@@ -142,7 +143,7 @@ def update_crowns(user_id, amount, name):
 def get_user_data(user_id):
     with sqlite3.connect(db_path) as conn:
         cursor = conn.cursor()
-        cursor.execute("SELECT crowns, inventory FROM user_data WHERE user_id = ?", (user_id,))
+        cursor.execute("SELECT crowns, inventory, characters FROM user_data WHERE user_id = ?", (user_id,))
         return cursor.fetchone()
       
 # Retrieve leaderboard
@@ -182,7 +183,41 @@ def give_crowns(giver, amount, recipient):
         conn.commit()
         return True
 
-# ADMIN ONLY COMMANDS **********************************************************************************
+# Let users manage the characters tied to their account
+def manage_user_characters(user_id, character_name, character_title, character_sheet_url, action):
+    with sqlite3.connect(db_path) as conn:
+        cursor = conn.cursor()
+        
+        # Fetch the current characters
+        cursor.execute("SELECT characters FROM user_data WHERE user_id = ?", (user_id,))
+        result = cursor.fetchone()
+        
+        if result:
+            characters = json.loads(result[0])
+        else:
+            # If the user doesn't exist in the table, create an entry
+            cursor.execute("INSERT INTO user_data (user_id) VALUES (?)", (user_id,))
+            characters = []
+        
+        if action == "add":
+            # Add the character
+            new_character = {
+                "name": character_name,
+                "title": character_title,
+                "sheet_url": character_sheet_url
+            }
+            characters.append(new_character)
+            print(f"Added character: {new_character}")
+        elif action == "remove":
+            # Remove the character by name
+            characters = [char for char in characters if char["name"] != character_name]
+            print(f"Removed character with name: {character_name}")
+        else:
+            raise ValueError("Invalid action. Use 'add' or 'remove'.")
+        
+        # Update the characters in the database
+        cursor.execute("UPDATE user_data SET characters = ? WHERE user_id = ?", (json.dumps(characters), user_id))
+        conn.commit()
 
 # Admin Role Check
 def is_admin():

@@ -56,7 +56,6 @@ async def on_message(message):
     update_crowns(user_id, Gains, name)
     await bot.process_commands(message)  # Ensure commands still work
 
-
 # Run the bot with token
 bot.run(token)
 

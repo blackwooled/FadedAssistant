@@ -1,7 +1,8 @@
 [
     {
         "user_id": "357786069741207553",
-        "crowns": 25,
-        "inventory": "[{\"item_name\": \"Sword\", \"quantity\": 1}, {\"item_name\": \"Potion\", \"quantity\": 2}]"
+        "crowns": 34,
+        "inventory": "[]",
+        "characters": "[{\"name\": \"jimbo\", \"title\": \"plonko\", \"sheet_url\": \"https://docs.google.com/document/d/1NUHb1vziMotC3GkXIj0IaYuib_uENW2I/edit\"}]"
     }
 ]
