@@ -16,7 +16,7 @@ class Admin(commands.Cog):
         self.bot = bot
     
     
-    @commands.group(name="admin", invoke_without_command=True, hidden=True)
+    @commands.group(name="admin", invoke_without_command=True, hidden=False)
     @is_admin()
     async def admin_group(self, ctx):      
         # Get the Admin cog
@@ -28,11 +28,16 @@ class Admin(commands.Cog):
         embed = embed_builder(
         title="Admin Commands",
         description="Welcome to the admin section. Here are the available admin commands:",
+        footer_text="If you need help with this, please poke Maat before crushing the server economy <3 <3 <3",
         )
         
-        for command in admin_cog.get_commands():
-            embed.add_field(
-                    name=f"!{command.name}",
+        subcommands = self.admin_group.commands
+
+        for command in subcommands:
+             if not command.hidden:  # Skip hidden commands
+                aliases = f" or !{' or !'.join(command.aliases)}" if command.aliases else ""
+                embed.add_field(
+                    name=f"!admin {command.name}{aliases}",
                     value=command.help or "No description available.",
                     inline=False
                 )
@@ -40,7 +45,7 @@ class Admin(commands.Cog):
         await ctx.send(embed=embed)
 
     # ADD OR REMOVE ITEMS
-    @admin_group.command(name="items", help="Add or remove items from user inventories. Syntax: !admin items <user> <item_name> <+-quantity>")
+    @admin_group.command(name="items", help="Add or remove items from user inventories.\n Syntax: !admin items <user> <item_name> <+-quantity>")
     async def manage_items(self, ctx, member: commands.MemberConverter, item_name: str, quantity: int):
         manage_inventory(member.id, item_name, quantity)
         if quantity>0:
@@ -48,7 +53,7 @@ class Admin(commands.Cog):
         else:
             await ctx.send(f"{-quantity} {item_name} has been removed from {member.display_name}'s inventory.")
     
-    @admin_group.command(name="print", help="Prints current user database to json. Used for backing up data and updating the bot.")
+    @admin_group.command(name="print", help="Prints current user database to json.\n Used for backing up data and updating the bot.")
     async def export_users(self, ctx):
         #Export the user_data table to a JSON file.
         try:
@@ -58,7 +63,7 @@ class Admin(commands.Cog):
         except Exception as e:
             await ctx.send(f"An error occurred: {e}")
 
-    @admin_group.command(name="money", help = "Adds or removes Crowns from user balance. Syntax: !admin money <user> <+-amount>")
+    @admin_group.command(name="money", help = "Adds or removes Crowns from user balance.\n Syntax: !admin money <user> <+-amount>")
     async def manage_money(self, ctx, member: commands.MemberConverter, amount: int):
        
         try:

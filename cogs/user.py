@@ -227,7 +227,7 @@ class User(commands.Cog):
         description="Here is a list of commands you can use with this bot:",
         )
         for command in self.bot.commands:
-            if not command.hidden:  # Skip commands marked as hidden
+            if not command.hidden and command.cog_name != "Admin":  # Skip commands marked as hidden
                 aliases = f" or !{'or !'.join(command.aliases)}" if command.aliases else ""
                 embed.add_field(
                     name=f"!{command.name}{aliases}",

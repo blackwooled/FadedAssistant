@@ -1,5 +1,6 @@
 import discord 
 from discord.ext import commands
+from discord.ui import Select, View
 import asyncio
 import os
 import json
@@ -21,7 +22,10 @@ class Store(commands.Cog):
     # DISPLAY STORE. !store !s
     @commands.command(name="store", aliases=["s"], help="Opens up the store for some fashionable shopping~")
     async def store(self, ctx):
-        #Displays the landing page with store categories."""
+        #Displays the landing page with store categories.
+
+        store_user = ctx.author.id
+
         # Fetch categories from the database
         with sqlite3.connect(db_path) as conn:
             cursor = conn.cursor()
@@ -39,25 +43,50 @@ class Store(commands.Cog):
             title="Welcome to the Grim Armory!",
             description="Here are the currently available items:\n\nPlease select a category to begin browsing.\n\n" + 
                         "\n".join(f"• {category}" for category in categories),
-            footer_text="Type the category name to browse items."
+            footer_text="Please select a category to browse from the dropdown menu below."
         )
 
         # Send the embed and wait for a response
         message = await ctx.send(embed=embed)
+        
+        
+        # Create the dropdown (select menu) dynamically
+        options = [discord.SelectOption(label=category) for category in categories]
+        # Create the select menu (without using a class)
+        select = Select(
+            placeholder="Choose a category...",
+            min_values=1,
+            max_values=1,
+            options=options
+        )
+        # Define the callback function for the select menu
+        async def category_select_callback(interaction: discord.Interaction):
+            # Check if the user interacting is the same as the one who invoked the store command
+            if interaction.user.id != store_user:
+                await interaction.response.send_message("You did not open the store. Please interact with the correct message.", ephemeral=True)
+                return
+            
+            selected_category = interaction.data['values'][0]
+            #return selected_category
+            await interaction.response.send_message(f"You selected the category: **{selected_category}**")
+            await self.show_category(ctx, selected_category)
+            
 
-        def check(m):
-            return m.author == ctx.author and m.channel == ctx.channel
+        # Assign the callback function to the select menu
+        select.callback = category_select_callback
 
-        try:
-            response = await self.bot.wait_for("message", timeout=300.0, check=check)
-            category = response.content.strip()
+        # Create the view and add the select menu to it
+        view = View(timeout=300.0)
+        view.add_item(select)
 
-            if category in categories:
-                await self.show_category(ctx, category)
-            else:
-                await ctx.send("Invalid category. Please try again.")
-        except TimeoutError:
-            await ctx.send("Purchase timed out.")
+        # Send the message with the dropdown menu
+        await ctx.send("Please select a category from the dropdown below:", view=view)
+
+        # Wait for the View's timeout
+        timed_out = await view.wait()
+        if timed_out:
+            await ctx.send("Purchase timed out. Please start again.")
+        
 
     async def show_category(self, ctx, category):
         #Displays the items in the selected category with pagination.
@@ -184,13 +213,16 @@ class Store(commands.Cog):
             conn.commit()
         await channel.send(f"Successfully bought {item_name} for {price} Crowns! You now have {new_crowns} Crowns left.")
 
-    @commands.Cog.listener()
-    async def on_reaction_add(self, reaction, user):
-        #Handles reaction navigation.
-        if user.bot:
-            return
-        if user.id in self.store_pages:
-            await self.show_page(reaction.message.channel)
+    #@commands.Cog.listener()
+    #async def on_reaction_add(self, reaction, user):
+    #    #Handles reaction navigation.
+    #    if reaction.emoji == "⬅️" or "➡️":
+    #        if user.bot:
+    #            return
+    #        if user.id in self.store_pages:
+    #            await self.show_page(reaction.message.channel)
+    #    else:
+    #        return
            
 
 async def setup(bot):
