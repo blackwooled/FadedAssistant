@@ -21,7 +21,7 @@ bot = commands.Bot(command_prefix=prefix, help_command=None, intents=discord.Int
 async def on_ready():
     print(f'Logged in as {bot.user}')
     init_db()  # Initialize the database when the bot starts
-    import_armory_items()  #Import Shop Items when the bot starts
+    #import_armory_items()  #Import Shop Items when the bot starts
 
     # Automatically load cogs from the "cogs" folder
     for filename in os.listdir("./cogs"):

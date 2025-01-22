@@ -175,7 +175,8 @@ cython_debug/
 *.db
 
 # Printout of user_data used only for safekeeping and debugging purposes
-user_data.json
+.data/user_data.json
+user_data_export.json
 
 autogit.sh
 tags.txt

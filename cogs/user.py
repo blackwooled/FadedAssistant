@@ -2,12 +2,21 @@ from discord import Message
 from discord.ext import commands
 import os
 import json
+import re
 from dotenv import load_dotenv
 from utils.database import get_user_data, get_leaderboard, give_crowns, embed_builder, manage_user_characters
 
 # Load .env file to get user_data.db path
 load_dotenv()
 db_path = os.getenv("db_path")
+
+# Regex for URL validation
+url_pattern = re.compile(
+    r'^(https?:\/\/)?'  # http:// or https://
+    r'([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}'  # Domain
+    #r'(:[0-9]{1,5})?'  # Optional port
+    #r'(\/\S*)?$'  # Path
+)
 
 class User(commands.Cog):
     def __init__(self, bot):
@@ -109,8 +118,8 @@ class User(commands.Cog):
         else:
             await ctx.send("Your inventory is empty.")
 
-    # Add or remove characters from user profile
-    @commands.command(name="character", aliases=["c"], help="Add or remove characters from your profile.")
+    # Add or remove characters from user profile. !character, !c
+    @commands.command(name="character", aliases=["c"], help="Add or remove characters from your profile.\n Syntax: !character add <name> <title> <URL> || !character remove <name>")
     async def manage_character(self, ctx, action, name, title=None, sheet_url=None):
         
         #Add or remove characters from the user's character list.
@@ -132,7 +141,7 @@ class User(commands.Cog):
             
             elif action == "remove":
                 if not name:
-                    await ctx.send("Please provide the name of the character to remove.")
+                    await ctx.send("Please provide the name of the character to remove.\n The correct syntax is as follows: **!character remove <name>**.")
                     return
                 
                 manage_user_characters(user_id, name, None, None, action="remove")
@@ -144,6 +153,7 @@ class User(commands.Cog):
         
         except Exception as e:
             await print(f"An error occurred: {e}")
+            await ctx.send(f"An error occurred! Better poke an admin.")
 
     # help function for character adding (on user's request)
     async def add_character_help(self, ctx):
@@ -164,6 +174,9 @@ class User(commands.Cog):
             # Step 2: Ask for character name
             await ctx.send("Please type the name of your character:")
             name_response = await self.bot.wait_for("message", check=check_author, timeout=60)
+            if not name_response.content.strip():
+                await ctx.send("Character name cannot be empty. Please try again.")
+                return
             char_name = name_response.content
 
             # Step 3: Ask for character title
@@ -177,8 +190,11 @@ class User(commands.Cog):
             sheet_url = url_response.content
 
             # Validate URL format
-            if not sheet_url.startswith("http://") and not sheet_url.startswith("https://"):
-                await ctx.send("That doesn't look like a valid URL. Please try again.")
+            #if not sheet_url.startswith("http://") and not sheet_url.startswith("https://"):
+            #    await ctx.send("That doesn't look like a valid URL. Please try again.")
+            #    return
+            if not re.match(url_pattern, sheet_url):
+                await ctx.send("The URL provided is invalid. Please try again.")
                 return
 
             user_id = str(ctx.author.id)
@@ -188,7 +204,8 @@ class User(commands.Cog):
         except TimeoutError:
             await ctx.send("You took too long to respond! Please try the command again.")
         except Exception as e:
-            await ctx.send(f"An error occurred: {e}")
+            await print(f"An error occurred: {e}")
+            await ctx.send(f"An error occurred! Better poke an admin.")
 
     #LEADERBOARD. !leaderboard
     @commands.command(name="leaderboard", aliases=["l"], help="Displays the top 10 leaderboard.")

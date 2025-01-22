@@ -1,0 +1,38 @@
+{
+  "Barghest": {
+        "nmy_description": "",
+        "drop_pool": "[]",
+        "element": "",
+        "special": "",
+        "hp": 2,
+        "attack": 2,
+        "speed": 2,
+        "rarity": 2,
+        "encounter_rate": 0.25,
+        "nmy_icon": ""
+   },
+  "Terrasq": {
+        "nmy_description": "",
+        "drop_pool": "[]",
+        "element": "",
+        "special": "",
+        "hp": 2,
+        "attack": 2,
+        "speed": 2,
+        "rarity": 2,
+        "encounter_rate": 0.25,
+        "nmy_icon": ""
+    },
+  "Rot Titan": {
+        "nmy_description": "",
+        "drop_pool": "[]",
+        "element": "",
+        "special": "",
+        "hp": 2,
+        "attack": 2,
+        "speed": 2,
+        "rarity": 2,
+        "encounter_rate": 0.25,
+        "nmy_icon": ""
+    }
+}

@@ -8,6 +8,7 @@ from utils.database import manage_inventory, is_admin, embed_builder, export_use
 # Load .env file to get user_data.db path
 load_dotenv()
 db_path = os.getenv("db_path")
+export_path = os.getenv("userexport_path")
 
 
 class Admin(commands.Cog):
@@ -17,24 +18,29 @@ class Admin(commands.Cog):
     
     @commands.group(name="admin", invoke_without_command=True, hidden=True)
     @is_admin()
-    async def admin_group(self, ctx):
-        await ctx.send("Welcome to the admin section. Available admin commands: money, items")
-        #embed = embed_builder(
-        #title="!Admin",
-        #description="Welcome to the admin section. Available admin commands:",
-        #)
-        #for command in :
-        #    if not command.hidden:  # Skip commands marked as hidden
-        #        aliases = f" or !{'or !'.join(command.aliases)}" if command.aliases else ""
-        #        embed.add_field(
-        #            name=f"!{command.name}{aliases}",
-        #            value=command.help or "No description available.",
-        #            inline=False
-        #        )
-        #await ctx.send(embed=embed)
+    async def admin_group(self, ctx):      
+        # Get the Admin cog
+        admin_cog = self.bot.get_cog("Admin")
+        if not admin_cog:
+            await ctx.send("Admin cog not found.")
+            return
+
+        embed = embed_builder(
+        title="Admin Commands",
+        description="Welcome to the admin section. Here are the available admin commands:",
+        )
+        
+        for command in admin_cog.get_commands():
+            embed.add_field(
+                    name=f"!{command.name}",
+                    value=command.help or "No description available.",
+                    inline=False
+                )
+        
+        await ctx.send(embed=embed)
 
     # ADD OR REMOVE ITEMS
-    @admin_group.command(name="items")
+    @admin_group.command(name="items", help="Add or remove items from user inventories. Syntax: !admin items <user> <item_name> <+-quantity>")
     async def manage_items(self, ctx, member: commands.MemberConverter, item_name: str, quantity: int):
         manage_inventory(member.id, item_name, quantity)
         if quantity>0:
@@ -42,24 +48,17 @@ class Admin(commands.Cog):
         else:
             await ctx.send(f"{-quantity} {item_name} has been removed from {member.display_name}'s inventory.")
     
-    @admin_group.command(name="print")
+    @admin_group.command(name="print", help="Prints current user database to json. Used for backing up data and updating the bot.")
     async def export_users(self, ctx):
         #Export the user_data table to a JSON file.
         try:
-            # Call the database export function
-            file_name = export_users_to_json()
-            
-            # Send the file to the admin
-            if os.path.exists(file_name):
-                await ctx.send(file=discord.File(file_name))
-                await ctx.send("User data exported successfully.")
-            else:
-                await ctx.send("Failed to create the JSON export file.")
-
+            export_users_to_json()  # Call the function to export data
+            await ctx.send(file=discord.File(export_path))
+            await ctx.send(f"User data exported successfully to `{export_path}`.")      
         except Exception as e:
             await ctx.send(f"An error occurred: {e}")
 
-    @admin_group.command(name="money")
+    @admin_group.command(name="money", help = "Adds or removes Crowns from user balance. Syntax: !admin money <user> <+-amount>")
     async def manage_money(self, ctx, member: commands.MemberConverter, amount: int):
        
         try:

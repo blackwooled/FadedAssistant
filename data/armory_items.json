@@ -129,6 +129,28 @@
     },
   
 
+    "Condo": {
+        "price": 50000,
+        "item_description": "A small apartment in a reasonably priced part of town. The neighbors are rowdy and the community tight-knit.",
+        "category_tag": "Channel Purchase",
+        "species_tag": "n/a",
+        "item_icon": ""
+    },
+    "Loft": {
+        "price": 100000,
+        "item_description": "Located amidst the high-rise towers, this dwelling exudes luxury.",
+        "category_tag": "Channel Purchase",
+        "species_tag": "n/a",
+        "item_icon": ""
+    },
+    "Villa": {
+        "price": 175000,
+        "item_description": "Calm and away from the hustle and bustle of the city, this dwelling is truly a mark of wealth.",
+        "category_tag": "Channel Purchase",
+        "species_tag": "n/a",
+        "item_icon": ""
+    },
+
 
     "Character Slot 3": {
         "price": 30000,

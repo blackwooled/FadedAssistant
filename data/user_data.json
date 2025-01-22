@@ -1,8 +1,13 @@
-[
-    {
-        "user_id": "357786069741207553",
-        "crowns": 34,
-        "inventory": "[]",
-        "characters": "[{\"name\": \"jimbo\", \"title\": \"plonko\", \"sheet_url\": \"https://docs.google.com/document/d/1NUHb1vziMotC3GkXIj0IaYuib_uENW2I/edit\"}]"
+{
+    "357786069741207553": {
+        "crowns": 42,
+        "inventory": [],
+        "characters": [
+            {
+                "name": "jimbo",
+                "title": "plonko",
+                "sheet_url": "https://docs.google.com/document/d/1NUHb1vziMotC3GkXIj0IaYuib_uENW2I/edit"
+            }
+        ]
     }
-]
+}
