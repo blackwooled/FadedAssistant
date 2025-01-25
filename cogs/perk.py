@@ -46,7 +46,6 @@ class Perk(commands.Cog):
 
     async def assign_crowns_for_perks(self):
         #Assigns crowns to members based on their roles.
-        # Connect to the database to fetch perk data
         conn = sqlite3.connect(db_path)
         cursor = conn.cursor()
 
@@ -76,7 +75,7 @@ class Perk(commands.Cog):
                         titles.append(perk_name)
 
                 if earnings > 0:  # Only update crowns if the member has earned any    
-                    update_crowns(member.id, earnings, member)
+                    await update_crowns(member.id, earnings, member)
                     print(f"Added {earnings} Crowns to {member.display_name} for perk(s): {', '.join(titles)}.")
 
         except Exception as e:
@@ -86,7 +85,6 @@ class Perk(commands.Cog):
 
     @commands.command(name="assigncrowns", help="Manually assigns crowns based on perks.", hidden=True)
     @is_admin()
-    #@commands.has_permissions(administrator=True)  # Restrict this command to admins
     async def assign_crowns_command(self, ctx):
         #Command to manually invoke the crown assignment function.
         await ctx.send("Assigning crowns to members based on their perks...")

@@ -1,6 +1,7 @@
 import discord
 from discord.ext import commands
 import sqlite3
+import aiosqlite
 import json
 import os
 from dotenv import load_dotenv
@@ -49,7 +50,7 @@ def init_db():
     if os.path.exists(armory_path):
         import_armory_items()
 
-    #Creates the `bestiary` table in the database if it doesn't already exist.
+    #Creates the bestiary table in the database if it doesn't already exist.
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS bestiary (
         nmy_name TEXT PRIMARY KEY,
@@ -196,48 +197,6 @@ def add_user(user_id):
         VALUES (?, ?, ?)
         """, (user_id, 0, "[]"))
         conn.commit()
-
-
-#def assign_crowns_for_perks(self):
-        #Assigns crowns to members based on their roles.
-        # Connect to the database to fetch perk data
-#        conn = sqlite3.connect(db_path)
-#        cursor = conn.cursor()
-
-#        try:
-            # Fetch all perks from the database
-#            cursor.execute("SELECT id, perk_name, bonus FROM perks_data")
-#            perks = cursor.fetchall()
-
-#            if not perks:
-#                print("No perks found in the database.")
-#                return
-            
-            # Get the guild object
-#            guild = self.bot.get_guild(guild_id)
-#            if not guild:
-#                print("Guild not found.")
-#                return           
-            
-#            for member in guild.members:
-#                earnings = 0  # Reset for each member
-#                titles = []  # Collect perk titles for the member
-                
-#                for perk_id, perk_name, bonus in perks:
-#                    role = guild.get_role(perk_id)
-#                    if role and role in member.roles:  # Check if the member has the perk role
-#                        earnings += bonus
-#                        titles.append(perk_name)
-
-#                if earnings > 0:  # Only update crowns if the member has earned any    
-#                    update_crowns(member.id, earnings, member.display_name)
-#                    print(f"Added {earnings} Crowns to {member.display_name} for perk(s): {', '.join(titles)}.")
-
-#        except Exception as e:
-#            print(f"An error occurred: {e}")
-#        finally:
-#            conn.close()  # Ensure the connection is always closed
-
 
 # embed builder function
 def embed_builder(title, description, color=discord.Color.dark_gold(), fields=None, thumbnail_url=None, image_url=None, footer_text=None):
@@ -443,29 +402,29 @@ def manage_user_characters(user_id, character_name, character_title, character_s
         conn.commit()
 
 # Update crowns for a user
-def update_crowns(user_id, amount, name):
-    with sqlite3.connect(db_path) as conn:
-        cursor = conn.cursor()
+async def update_crowns(user_id, amount, name):
+    async with aiosqlite.connect(db_path) as conn:
+        cursor = await conn.cursor()
         
         # Check if the user exists
-        cursor.execute("SELECT 1 FROM user_data WHERE user_id = ?", (user_id,))
-        result = cursor.fetchone()
+        await cursor.execute("SELECT 1 FROM user_data WHERE user_id = ?", (user_id,))
+        result = await cursor.fetchone()
 
         if result is None:
             # User doesn't exist, add them to the database
             print(f"Adding new user {name.display_name} to the database.")
-            cursor.execute("""
+            await cursor.execute("""
             INSERT INTO user_data (user_id, crowns, inventory)
             VALUES (?, ?, ?)
             """, (user_id, 0, "[]"))
 
         # Update the crowns for the user
         print(f"Updating Crowns for user {name.display_name}. Adding {amount} Crowns.")
-        cursor.execute("""
+        await cursor.execute("""
         UPDATE user_data
         SET crowns = crowns + ?
         WHERE user_id = ?
         """, (amount, user_id))
 
-        conn.commit()
+        await conn.commit()
     return result

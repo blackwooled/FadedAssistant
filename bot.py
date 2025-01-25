@@ -48,11 +48,12 @@ async def on_message(message):
 
     user_id = str(message.author.id)
     # Get name for more legible logs
-    name = await bot.fetch_user(int(user_id))
+    name = message.author
+
     # Calculate Crowns based on message length
     Gains = round(len(message.content)/10)
     # Update user Crowns
-    update_crowns(user_id, Gains, name)
+    await update_crowns(user_id, Gains, name)
     await bot.process_commands(message)  # Ensure commands still work
 
 # Run the bot with token
