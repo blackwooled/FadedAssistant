@@ -2,7 +2,7 @@ import discord
 from discord.ext import commands
 import os
 from dotenv import load_dotenv
-from utils.database import init_db, add_user, update_crowns, import_armory_items
+from utils.database import init_db, add_user, update_crowns
 
 
 
@@ -21,7 +21,6 @@ bot = commands.Bot(command_prefix=prefix, help_command=None, intents=discord.Int
 async def on_ready():
     print(f'Logged in as {bot.user}')
     init_db()  # Initialize the database when the bot starts
-    #import_armory_items()  #Import Shop Items when the bot starts
 
     # Automatically load cogs from the "cogs" folder
     for filename in os.listdir("./cogs"):

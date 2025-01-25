@@ -7,13 +7,14 @@ from dotenv import load_dotenv
 
 # List Of Database Functions
 
-# Load .env file to get user_data.db path
+# Load .env file to get variables
 load_dotenv()
 db_path = os.getenv("db_path")
 armory_path = os.getenv("armory_path")
 bestiary_path = os.getenv("bestiary_path")
 admin_roles = [int(role_id) for role_id in os.getenv("admin_roles", "").split(",")]
 export_path = os.getenv("userexport_path")
+guild_id = os.getenv("guild_id")
 
 # SQLite Database initialization
 
@@ -65,6 +66,15 @@ def init_db():
     )
     """)
     
+    # Create the perks_data table if it doesn't exist
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS perks_data (
+        id INTEGER PRIMARY KEY,
+        perk_name TEXT,
+        bonus INTEGER DEFAULT 0
+    )
+    """)
+
     if os.path.exists(bestiary_path):
         import_bestiary()
     
@@ -187,6 +197,48 @@ def add_user(user_id):
         """, (user_id, 0, "[]"))
         conn.commit()
 
+
+#def assign_crowns_for_perks(self):
+        #Assigns crowns to members based on their roles.
+        # Connect to the database to fetch perk data
+#        conn = sqlite3.connect(db_path)
+#        cursor = conn.cursor()
+
+#        try:
+            # Fetch all perks from the database
+#            cursor.execute("SELECT id, perk_name, bonus FROM perks_data")
+#            perks = cursor.fetchall()
+
+#            if not perks:
+#                print("No perks found in the database.")
+#                return
+            
+            # Get the guild object
+#            guild = self.bot.get_guild(guild_id)
+#            if not guild:
+#                print("Guild not found.")
+#                return           
+            
+#            for member in guild.members:
+#                earnings = 0  # Reset for each member
+#                titles = []  # Collect perk titles for the member
+                
+#                for perk_id, perk_name, bonus in perks:
+#                    role = guild.get_role(perk_id)
+#                    if role and role in member.roles:  # Check if the member has the perk role
+#                        earnings += bonus
+#                        titles.append(perk_name)
+
+#                if earnings > 0:  # Only update crowns if the member has earned any    
+#                    update_crowns(member.id, earnings, member.display_name)
+#                    print(f"Added {earnings} Crowns to {member.display_name} for perk(s): {', '.join(titles)}.")
+
+#        except Exception as e:
+#            print(f"An error occurred: {e}")
+#        finally:
+#            conn.close()  # Ensure the connection is always closed
+
+
 # embed builder function
 def embed_builder(title, description, color=discord.Color.dark_gold(), fields=None, thumbnail_url=None, image_url=None, footer_text=None):
     embed = discord.Embed(title=title, description=description, color=color)
@@ -299,11 +351,6 @@ def is_admin():
         user_roles = [role.id for role in ctx.author.roles]
         return any(role_id in admin_roles for role_id in user_roles)
     return commands.check(predicate)
-
-#def is_admin():
-#    def predicate(ctx):
-#        return any(role.id in admin_roles for role in ctx.author.roles)
-#    return commands.check(predicate)
 
 #Import Store Items
 def load_armory_json():

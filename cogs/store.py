@@ -1,9 +1,9 @@
 import discord 
 from discord.ext import commands
 from discord.ui import Select, View
-import asyncio
+#import asyncio
 import os
-import json
+#import json
 import sqlite3
 from dotenv import load_dotenv
 from utils.database import embed_builder, manage_inventory
@@ -51,7 +51,7 @@ class Store(commands.Cog):
         
         
         # Create the dropdown (select menu) dynamically
-        options = [discord.SelectOption(label=category) for category in categories]
+        options = [discord.SelectOption(label=category) for category in categories]# + ["Catalogue"]
         # Create the select menu (without using a class)
         select = Select(
             placeholder="Choose a category...",
@@ -80,7 +80,7 @@ class Store(commands.Cog):
         view.add_item(select)
 
         # Send the message with the dropdown menu
-        await ctx.send("Please select a category from the dropdown below:", view=view)
+        await ctx.send("Please select a category from the dropdown below to begin browsing:", view=view)
 
         # Wait for the View's timeout
         timed_out = await view.wait()
@@ -147,9 +147,11 @@ class Store(commands.Cog):
         if len(pages) > 1:
             await message.add_reaction("⬅️")
             await message.add_reaction("➡️")
+        # Add a back-to-main-store emoji
+        await message.add_reaction("🔙")
 
         def check(reaction, user):
-            valid_emojis = number_emojis[:len(items)] + ["⬅️", "➡️"]
+            valid_emojis = number_emojis[:len(items)] + ["⬅️", "➡️", "🔙"]
             return user == ctx.author and str(reaction.emoji) in valid_emojis
 
         try:
@@ -163,6 +165,10 @@ class Store(commands.Cog):
                 user_data["current_page"] += 1
                 await message.delete()
                 await self.show_page(ctx)
+            elif str(reaction.emoji) == "🔙":
+                # Return to the main store front
+                await message.delete()
+                await self.store(ctx)  # Call the main store function
             elif str(reaction.emoji) in number_emojis:
                 selected_index = number_emojis.index(str(reaction.emoji))
                 selected_item = items[selected_index]
@@ -211,19 +217,37 @@ class Store(commands.Cog):
             cursor.execute("UPDATE user_data SET crowns = ? WHERE user_id = ?", (new_crowns, user_id))
 
             conn.commit()
-        await channel.send(f"Successfully bought {item_name} for {price} Crowns! You now have {new_crowns} Crowns left.")
+        await channel.send(f"Successfully bought {item_name} for {price} Crowns! You now have {new_crowns} Crowns left.")    
 
-    #@commands.Cog.listener()
-    #async def on_reaction_add(self, reaction, user):
-    #    #Handles reaction navigation.
-    #    if reaction.emoji == "⬅️" or "➡️":
-    #        if user.bot:
-    #            return
-    #        if user.id in self.store_pages:
-    #            await self.show_page(reaction.message.channel)
-    #    else:
-    #        return
-           
+    
+    # CATALOGUE OF ALPHABETICALLY ORGANISED ITEMS
+    @commands.command(name="catalogue", help="Showcases a catalogue of all items available for purchase listed in alphabetical order.")
+    async def storecatalogue(self, ctx):
+        # Step 1: Query the database for items
+        with sqlite3.connect(db_path) as conn:
+            cursor = conn.cursor()
+            cursor.execute(
+                "SELECT item_name, price, item_description, category_tag, species_tag FROM armory_data ORDER BY item_name"
+            )
+            items = cursor.fetchall()
+
+        if not items:
+            await ctx.send("The catalogue is empty!")
+            return
+
+        # Paginate the items
+        pages = [items[i:i + self.items_per_page] for i in range(0, len(items), self.items_per_page)]
+
+        category = "Catalogue"
+        # Store the pagination data
+        self.store_pages[ctx.author.id] = {"category": category, "pages": pages, "current_page": 0}
+
+        # Display the first page
+        await self.show_page(ctx)
+
+    # SELL ITEM. !sell
+    #@commands.command(name="sell", help="Allows you to cash in the hard-earned fruits of your laborious questing.")
+    #async def sell_item     
 
 async def setup(bot):
     print("Setting up Store cog...")

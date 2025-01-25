@@ -9,7 +9,7 @@ from utils.database import manage_inventory, is_admin, embed_builder, export_use
 load_dotenv()
 db_path = os.getenv("db_path")
 export_path = os.getenv("userexport_path")
-
+guild_id = os.getenv("guild_id")
 
 class Admin(commands.Cog):
     def __init__(self, bot):
@@ -97,7 +97,44 @@ class Admin(commands.Cog):
         except sqlite3.Error as e:
             await ctx.send(f"Failed to manage Crowns due to a database error: {e}")
 
+    @admin_group.command(name="perk", help = "Adds or removes a perk and their corresponding daily payouts.\n Syntax: !admin perk add <role_id> <bonus> || !admin perk remove <role_id>")
+    async def manage_perk(self, ctx, action: str, role_id: int, bonus: int = 0):
+        # Connect to the database
+        conn = sqlite3.connect(db_path)
+        cursor = conn.cursor()
 
+        try:
+            guild = self.bot.get_guild(ctx.guild.id)
+            role = guild.get_role(role_id)
+
+            if not role:
+                await ctx.send(f"Role with ID {role_id} not found in the server.")
+                return
+
+            if action.lower() == "add":
+                # Add the perk to the database
+                cursor.execute(
+                    "INSERT OR IGNORE INTO perks_data (id, perk_name, bonus) VALUES (?, ?, ?)",
+                    (role_id, role.name, bonus),
+                )
+                conn.commit()
+                await ctx.send(f"Added perk: **{role.name}** with a bonus of **{bonus} Crowns** to the database.")
+                print (f"Added perk: {role.name} with a bonus of {bonus} Crowns to the database.")
+
+            elif action.lower() == "remove":
+                # Remove the perk from the database
+                cursor.execute("DELETE FROM perks_data WHERE id = ?", (role_id,))
+                conn.commit()
+                await ctx.send(f"Removed perk: **{role.name}** from the database.")
+                print (f"Removed perk: {role.name} from the database.")
+
+            else:
+                await ctx.send("Invalid action. Use `add` to add a perk or `remove` to remove a perk.")
+
+        except Exception as e:
+            await ctx.send(f"An error occurred: {e}")
+        finally:
+            conn.close()
     
     # Error handling for admin command group
     #@admin.error
