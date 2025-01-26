@@ -6,7 +6,7 @@ import re
 from dotenv import load_dotenv
 from utils.database import get_user_data, get_leaderboard, give_crowns, embed_builder, manage_user_characters
 
-# Load .env file to get user_data.db path
+# Load .env file to get variables
 load_dotenv()
 db_path = os.getenv("db_path")
 

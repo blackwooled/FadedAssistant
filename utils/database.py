@@ -6,8 +6,6 @@ import json
 import os
 from dotenv import load_dotenv
 
-# List Of Database Functions
-
 # Load .env file to get variables
 load_dotenv()
 db_path = os.getenv("db_path")
@@ -66,7 +64,10 @@ def init_db():
         nmy_icon TEXT
     )
     """)
-    
+
+    if os.path.exists(bestiary_path):
+        import_bestiary()
+
     # Create the perks_data table if it doesn't exist
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS perks_data (
@@ -76,9 +77,6 @@ def init_db():
     )
     """)
 
-    if os.path.exists(bestiary_path):
-        import_bestiary()
-    
     conn.commit()
     conn.close()
 
@@ -151,8 +149,8 @@ def import_user_data():
             
             for user_id, data in user_data.items():
                 crowns = data.get("crowns", 0)
-                inventory = json.dumps(data.get("inventory", []))  # Convert list to JSON string
-                characters = json.dumps(data.get("characters", []))  # Convert list to JSON string
+                inventory = json.dumps(data.get("inventory", []))
+                characters = json.dumps(data.get("characters", []))
                 
                 # Check if the user_id already exists
                 cursor.execute("SELECT user_id FROM user_data WHERE user_id = ?", (user_id,))

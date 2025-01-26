@@ -5,7 +5,7 @@ import discord
 from dotenv import load_dotenv
 from utils.database import manage_inventory, is_admin, embed_builder, export_users_to_json
 
-# Load .env file to get user_data.db path
+# Load .env file to get variables
 load_dotenv()
 db_path = os.getenv("db_path")
 export_path = os.getenv("userexport_path")

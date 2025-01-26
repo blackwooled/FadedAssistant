@@ -5,10 +5,8 @@ import pytz
 import asyncio
 import os
 import sqlite3
-
 from dotenv import load_dotenv
-from utils.database import update_crowns, is_admin#, assign_crowns_for_perks
-
+from utils.database import update_crowns, is_admin
 
 # Load .env file to get variables
 load_dotenv()

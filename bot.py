@@ -4,17 +4,13 @@ import os
 from dotenv import load_dotenv
 from utils.database import init_db, add_user, update_crowns
 
-
-
-# Load the .env file to get the token and prefix for the bot
+# Load .env file to get variables
 load_dotenv()
 token = os.getenv("token")
 prefix = os.getenv("prefix")
 
 # Set up the bot's prefix and intents, disable default help command
 bot = commands.Bot(command_prefix=prefix, help_command=None, intents=discord.Intents.all())
-
-# BOT EVENTS *****************************************************************
 
 # Event that runs when the bot starts
 @bot.event
@@ -32,7 +28,6 @@ async def on_ready():
             except Exception as e:
                 print(f"Failed to load cog {cog_name}: {e}")
                 
-
 # Adds new users to the database
 @bot.event
 async def on_member_join(member):

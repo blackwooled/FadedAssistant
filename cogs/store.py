@@ -1,14 +1,12 @@
 import discord 
 from discord.ext import commands
 from discord.ui import Select, View
-#import asyncio
 import os
-#import json
 import sqlite3
 from dotenv import load_dotenv
 from utils.database import embed_builder, manage_inventory
 
-# Load .env file to get user_data.db path
+# Load .env file to get variables
 load_dotenv()
 db_path = os.getenv("db_path")
 
@@ -29,8 +27,8 @@ class Store(commands.Cog):
         # Fetch categories from the database
         with sqlite3.connect(db_path) as conn:
             cursor = conn.cursor()
-            cursor.execute("SELECT DISTINCT category_tag FROM armory_data")
-            #cursor.execute("SELECT DISTINCT category_tag FROM armory_data WHERE category_tag != ?", ("Debug Item",))
+            #cursor.execute("SELECT DISTINCT category_tag FROM armory_data")
+            cursor.execute("SELECT DISTINCT category_tag FROM armory_data WHERE category_tag != ?", ("Debug Item",))
             #The part after WHERE is to exclude Debug Items from the fetched list.
             categories = [row[0] for row in cursor.fetchall()]
 
