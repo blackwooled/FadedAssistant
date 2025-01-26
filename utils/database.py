@@ -11,6 +11,7 @@ load_dotenv()
 db_path = os.getenv("db_path")
 armory_path = os.getenv("armory_path")
 bestiary_path = os.getenv("bestiary_path")
+perks_path = os.getenv("perks_path")
 admin_roles = [int(role_id) for role_id in os.getenv("admin_roles", "").split(",")]
 export_path = os.getenv("userexport_path")
 guild_id = os.getenv("guild_id")
@@ -77,6 +78,9 @@ def init_db():
     )
     """)
 
+    if os.path.exists(perks_path):
+        import_perks_info()
+
     conn.commit()
     conn.close()
 
@@ -131,6 +135,34 @@ def import_bestiary():
         print("Enemies successfully added to the bestiary!")  
     except FileNotFoundError:
         print("The bestiary JSON file could not be found.")
+
+def import_perks_info():
+    try: 
+        # Load the items from the JSON file           
+        perks_info = load_perks_info()
+        
+        # Open a connection to the database
+        with sqlite3.connect(db_path) as conn:
+            cursor = conn.cursor()
+
+            # Insert items into the store_items table
+            for id, perk_data, in perks_info.items():
+
+                # Use INSERT OR REPLACE to ensure we don't add duplicate items
+                try:
+                    cursor.execute("""
+                    INSERT OR REPLACE INTO perks_data (id, perk_name, bonus)
+                    VALUES (?, ?, ?)
+                    """, (id, perk_data["perk_name"], perk_data["bonus"]))
+                except sqlite3.Error as e:
+                    print(f"Error occurred while inserting {id}: {e}")
+
+            # Commit the transaction to save changes
+            conn.commit()
+        
+        print("Perks successfully added to the table!")  
+    except FileNotFoundError:
+        print("The perks JSON file could not be found.")
 
 def import_user_data():
     try:
@@ -323,6 +355,13 @@ def load_bestiary_json():
     bestiary_link = os.path.join(bestiary_path)
       
     with open(bestiary_link, 'r') as file:
+        return json.load(file)
+
+#Import Perk Info
+def load_perks_info():
+    perks_link = os.path.join(perks_path)
+      
+    with open(perks_link, 'r') as file:
         return json.load(file)
 
 #Import previous data about users  

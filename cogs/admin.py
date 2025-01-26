@@ -41,7 +41,12 @@ class Admin(commands.Cog):
                     value=command.help or "No description available.",
                     inline=False
                 )
-        
+
+        embed.add_field(
+            name=f"!assigncrowns",
+            value="Manually assign crowns to users based on their perks.",
+            inline=False
+        )
         await ctx.send(embed=embed)
 
     # ADD OR REMOVE ITEMS

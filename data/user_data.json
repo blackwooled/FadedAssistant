@@ -1,18 +1,5 @@
 {
     "357786069741207553": {
-        "crowns": 42,
-        "inventory": [
-            {
-                "item_name": "Potion",
-                "quantity": 1
-            }
-        ],
-        "characters": [
-            {
-                "name": "jimbo",
-                "title": "plonko",
-                "sheet_url": "https://docs.google.com/document/d/1NUHb1vziMotC3GkXIj0IaYuib_uENW2I/edit"
-            }
-        ]
+        "crowns": 0
     }
 }

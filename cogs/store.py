@@ -40,7 +40,7 @@ class Store(commands.Cog):
         embed = embed_builder(
             title="Welcome to the Grim Armory!",
             description="Here are the currently available items:\n\nPlease select a category to begin browsing.\n\n" + 
-                        "\n".join(f"• {category}" for category in categories),
+                        "\n".join(f"• {category}" for category in categories + ["Catalogue"]),
             footer_text="Please select a category to browse from the dropdown menu below."
         )
 
@@ -49,7 +49,8 @@ class Store(commands.Cog):
         
         
         # Create the dropdown (select menu) dynamically
-        options = [discord.SelectOption(label=category) for category in categories]# + ["Catalogue"]
+        options = [discord.SelectOption(label=category) for category in categories]
+        options.append(discord.SelectOption(label="Catalogue"))
         # Create the select menu (without using a class)
         select = Select(
             placeholder="Choose a category...",
@@ -65,9 +66,15 @@ class Store(commands.Cog):
                 return
             
             selected_category = interaction.data['values'][0]
-            #return selected_category
-            await interaction.response.send_message(f"You selected the category: **{selected_category}**")
-            await self.show_category(ctx, selected_category)
+            # Check if "Catalogue" was selected
+            if selected_category == "Catalogue":
+                # Call the storecatalogue command
+                await interaction.response.send_message("Loading the catalogue...", ephemeral=True)
+                await self.storecatalogue(ctx)  # Replace with the correct function call if needed
+            else:
+                # If another category is selected, handle it normally
+                await interaction.response.send_message(f"You selected the category: **{selected_category}**")
+                await self.show_category(ctx, selected_category)
             
 
         # Assign the callback function to the select menu
